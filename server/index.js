@@ -10,10 +10,10 @@ app.get("/lookup", async (req, res) => {
   try {
     const whoisResponse = await axios.get(`https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=${process.env.WHOIS_API_KEY}&domainName=${domain}&outputFormat=JSON`);
     console.log(whoisResponse.data);
+    res.json({ data: whoisResponse.data });
   } catch (error) {
     console.error(error);
   }
-  res.json({ message: "Hello from server!" });
 });
 
 app.listen(PORT, () => {
