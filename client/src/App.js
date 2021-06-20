@@ -1,30 +1,57 @@
 import React, { useState } from "react";
+import { gql, useQuery } from '@apollo/client';
 import "./App.css";
-import axios from "axios";
 import Highlight from 'react-highlight';
 
-function App() {
-  const [whoisData, setWhoisData] = useState({});
-  const [domain, setDomain] = useState('');
-  const [received, setReceived] = useState(false);
+const GET_WHOIS = gql`
+    query GetWhois($domain: String!) {
+      whois(domain: $domain) {
+        name
+        domainStatus
+        nameServers
+        registryExpiration
+        created
+        administrativeContact {
+          organization
+          state
+          countryCode
+        }
+        technicalContact {
+          organization
+          state
+          countryCode
+        }
+        registrantContact {
+          organization
+          state
+          countryCode
+        }
+        registrar {
+          name
+          ianaID
+          abuseContactPhone
+          abuseContactEmail
+        }
+      }
+    }
+  `
 
-  const getWhoisData = async () => {
-    const response = await axios.get(`/lookup?domain=${domain}`);
-    setWhoisData(response.data);
-    setReceived(true);
-  };
+function App() {
+  const [domain, setDomain] = useState('');
+  const [nextDomain, setNextDomain] = useState('');
+
+  const { data } = useQuery(GET_WHOIS, {
+    variables: { domain }
+  });
 
   const onChange = event => {
-    setDomain(event.target.value);
+    setNextDomain(event.currentTarget.value);
   }
 
   const onSubmit = async event => {
     event.preventDefault();
-    try {
-      await getWhoisData();
-    } catch (e) {
-      console.log('error...', e);
-    }
+    setDomain(`${nextDomain}`);
+    setNextDomain('');
   }
 
   return (
@@ -34,14 +61,14 @@ function App() {
       </header>
       <div className="form-container">
         <form onSubmit={onSubmit}>
-          <input type="text" value={domain} onChange={onChange}/>
+          <input type="text" value={nextDomain} onChange={onChange}/>
           <input type="submit" value="Submit" />
         </form>
       </div>
-      {received &&
+      {data &&
         <div className="whois-container">
           <Highlight className="json">
-            {JSON.stringify(whoisData, null, 2)}
+            {JSON.stringify(data, null, 2)}
           </Highlight>
         </div>
       }
