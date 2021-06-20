@@ -2,6 +2,16 @@ import React, { useState } from "react";
 import { gql, useQuery } from '@apollo/client';
 import "./App.css";
 import Highlight from 'react-highlight';
+import styled from 'styled-components';
+
+const Input = styled.input`
+  padding: 0.5em;
+  margin: 0.5em;
+  color: "black";
+  border-style: solid;
+  border-radius: 25px;
+  width: 50%;
+`;
 
 const GET_WHOIS = gql`
     query GetWhois($domain: String!) {
@@ -40,8 +50,9 @@ function App() {
   const [domain, setDomain] = useState('');
   const [nextDomain, setNextDomain] = useState('');
 
-  const { data } = useQuery(GET_WHOIS, {
-    variables: { domain }
+  const { data, error } = useQuery(GET_WHOIS, {
+    variables: { domain },
+    errorPolicy: 'all'
   });
 
   const onChange = event => {
@@ -61,15 +72,22 @@ function App() {
       </header>
       <div className="form-container">
         <form onSubmit={onSubmit}>
-          <input type="text" value={nextDomain} onChange={onChange}/>
-          <input type="submit" value="Submit" />
+          <Input type="text" placeholder="Enter a Domain or IP Address" value={nextDomain} onChange={onChange}/>
+          <Input type="submit" value="Go!" />
         </form>
       </div>
-      {data &&
+      {data && !error &&
         <div className="whois-container">
           <Highlight className="json">
             {JSON.stringify(data, null, 2)}
           </Highlight>
+        </div>
+      }
+      {error &&
+        <div>
+          {error.graphQLErrors.map(({ message }, i) => (
+            <span key={i}>{message}</span>
+          ))}
         </div>
       }
     </div>
