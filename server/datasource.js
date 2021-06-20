@@ -12,28 +12,31 @@ class WhoisAPI extends RESTDataSource {
   }
 
   whoisReducer(whoisData) {
-    const domainStatuses = whoisData.status.split(" ")
+    let domainStatuses;
+    if (whoisData.status) {
+      domainStatuses = whoisData.status.split(" ")
+    }
 
     return {
       name: whoisData.domainName,
       domainStatus: domainStatuses,
-      nameServers: whoisData.nameServers.hostNames,
+      nameServers: whoisData.nameServers ? whoisData.nameServers.hostNames : null,
       registryExpiration: whoisData.registryData.expiresDate,
       created: whoisData.registryData.createdDate,
       administrativeContact: {
-        organization: whoisData.administrativeContact.organization,
-        state: whoisData.administrativeContact.state,
-        countryCode: whoisData.administrativeContact.countryCode
+        organization: whoisData.administrativeContact ? whoisData.administrativeContact.organization : null,
+        state: whoisData.administrativeContact ? whoisData.administrativeContact.state : null,
+        countryCode: whoisData.administrativeContact ? whoisData.administrativeContact.countryCode : null
       },
       technicalContact: {
-        organization: whoisData.technicalContact.organization,
-        state: whoisData.technicalContact.state,
-        countryCode: whoisData.technicalContact.countryCode
+        organization: whoisData.technicalContact ? whoisData.technicalContact.organization : null,
+        state: whoisData.technicalContact ? whoisData.technicalContact.state : null,
+        countryCode: whoisData.technicalContact ? whoisData.technicalContact.countryCode : null
       },
       registrantContact: {
-        organization: whoisData.registrant.organization,
-        state: whoisData.registrant.state,
-        countryCode: whoisData.registrant.countryCode
+        organization: whoisData.registrant ? whoisData.registrant.organization : null,
+        state: whoisData.registrant ? whoisData.registrant.state : null,
+        countryCode: whoisData.registrant ? whoisData.registrant.countryCode : null
       },
       registrar: {
         name: whoisData.registrarName,
