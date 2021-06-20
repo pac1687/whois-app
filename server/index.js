@@ -10,7 +10,7 @@ app.use(cors())
 app.get("/lookup", async (req, res) => {
   const { domain } = req.query;
   try {
-    const whoisResponse = await axios.get(`https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=${process.env.WHOIS_API_KEY}&domainName=${domain}&outputFormat=JSON`);
+    const whoisResponse = await axios.get(`https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=${process.env.WHOIS_API_KEY}&domainName=${domain}&outputFormat=JSON&ignoreRawTexts=1`);
     console.log(whoisResponse.data);
     res.json(whoisResponse.data);
   } catch (error) {
