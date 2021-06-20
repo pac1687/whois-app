@@ -1,23 +1,17 @@
-const express = require("express");
-const axios = require('axios');
-const cors = require('cors')
+const { ApolloServer } = require('apollo-server')
+const typeDefs = require('./schema');
+const resolvers = require('./resolvers')
 
-const PORT = process.env.PORT || 8000;
+const WhoisAPI = require('./datasource')
 
-const app = express();
-app.use(cors())
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  dataSources: () => ({
+    whoisAPI: new WhoisAPI()
+  })
+})
 
-app.get("/lookup", async (req, res) => {
-  const { domain } = req.query;
-  try {
-    const whoisResponse = await axios.get(`https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=${process.env.WHOIS_API_KEY}&domainName=${domain}&outputFormat=JSON&ignoreRawTexts=1`);
-    console.log(whoisResponse.data);
-    res.json(whoisResponse.data);
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+server.listen().then(({ url }) => {
+  console.log(`Send queries to ${url}`);
 });
