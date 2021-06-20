@@ -9,7 +9,7 @@ function App() {
   const [received, setReceived] = useState(false);
 
   const getWhoisData = async () => {
-    const response = await axios.get(`http://localhost:8000/lookup?domain=${domain}`);
+    const response = await axios.get(`/lookup?domain=${domain}`);
     setWhoisData(response.data);
     setReceived(true);
   };
