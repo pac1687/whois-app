@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  backend:
+    env_file:
+        "./server/server.env"
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    image: "pac1687/whois-app-backend"
+    ports:
+      - "8000:8000"
+  frontend:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: "pac1687/twitter-sentiment-frontend"
+    ports:
+      - "3000:3000"
+    links:
+      - "backend:be"
