@@ -9,12 +9,12 @@ services:
       dockerfile: ./Dockerfile
     image: "pac1687/whois-app-backend"
     ports:
-      - "8000:8000"
+      - "4000:4000"
   frontend:
     build:
       context: ./client
       dockerfile: ./Dockerfile
-    image: "pac1687/twitter-sentiment-frontend"
+    image: "pac1687/whois-app-frontend"
     ports:
       - "3000:3000"
     links:
