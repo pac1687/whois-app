@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { gql, useQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
 import "./App.css";
 import Highlight from 'react-highlight';
 import styled from 'styled-components';
@@ -44,26 +44,21 @@ const GET_WHOIS = gql`
         }
       }
     }
-  `
+  `;
 
 function App() {
   const [domain, setDomain] = useState('');
-  const [nextDomain, setNextDomain] = useState('');
-
-  const { data, error } = useQuery(GET_WHOIS, {
-    variables: { domain },
-    errorPolicy: 'all'
-  });
+  const [getWhoisData, { data, error }] = useLazyQuery(GET_WHOIS);
 
   const onChange = event => {
-    setNextDomain(event.currentTarget.value);
-  }
+    setDomain(event.currentTarget.value);
+  };
 
   const onSubmit = async event => {
     event.preventDefault();
-    setDomain(`${nextDomain}`);
-    setNextDomain('');
-  }
+    getWhoisData({ variables: { domain }, errorPolicy: 'all' });
+    setDomain('');
+  };
 
   return (
     <div className="App">
@@ -72,7 +67,7 @@ function App() {
       </header>
       <div className="form-container">
         <form onSubmit={onSubmit}>
-          <Input type="text" placeholder="Enter a Domain or IP Address" value={nextDomain} onChange={onChange}/>
+          <Input type="text" placeholder="Enter a Domain or IP Address" value={domain} onChange={onChange} />
           <Input type="submit" value="Go!" />
         </form>
       </div>
@@ -92,6 +87,6 @@ function App() {
       }
     </div>
   );
-}
+};
 
 export default App;
